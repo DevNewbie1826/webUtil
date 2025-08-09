@@ -11,7 +11,7 @@ A collection of useful and secure middleware for Go (Golang) web applications.
 ## Installation
 
 ```bash
-go get github.com/your-username/webUtil
+go get github.com/DevNewbie1/webUtil
 ```
 *(Please replace `your-username` with the actual path)*
 
@@ -30,7 +30,7 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"webUtil/compress"
+	"github.com/DevNewbie1/webUtil/compress"
 )
 
 func main() {
@@ -64,7 +64,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"webUtil/cookie"
+	"github.com/DevNewbie1/webUtil/cookie"
 )
 
 func main() {
@@ -119,7 +119,7 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"webUtil/secure"
+	"github.com/DevNewbie1/webUtil/secure"
 )
 
 func main() {
@@ -184,9 +184,9 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"webUtil/compress"
-	"webUtil/cookie"
-	"webUtil/secure"
+	"github.com/DevNewbie1/webUtil/compress"
+	"github.com/DevNewbie1/webUtil/cookie"
+	"github.com/DevNewbie1/webUtil/secure"
 )
 
 func main() {
@@ -265,7 +265,7 @@ Go(Golang) 웹 애플리케이션을 위한 유용하고 안전한 미들웨어 
 ## 설치
 
 ```bash
-go get github.com/your-username/webUtil
+go get github.com/DevNewbie1/webUtil
 ```
 *(실제 경로에 맞게 `your-username`을 수정해주세요)*
 
@@ -284,7 +284,7 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"webUtil/compress"
+	"github.com/DevNewbie1/webUtil/compress"
 )
 
 func main() {
@@ -318,7 +318,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"webUtil/cookie"
+	"github.com/DevNewbie1/webUtil/cookie"
 )
 
 func main() {
@@ -373,7 +373,7 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"webUtil/secure"
+	"github.com/DevNewbie1/webUtil/secure"
 )
 
 func main() {
@@ -438,9 +438,9 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"webUtil/compress"
-	"webUtil/cookie"
-	"webUtil/secure"
+	"github.com/DevNewbie1/webUtil/compress"
+	"github.com/DevNewbie1/webUtil/cookie"
+	"github.com/DevNewbie1/webUtil/secure"
 )
 
 func main() {
