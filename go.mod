@@ -1,4 +1,4 @@
-module github.com/DevNewbie1/webUtil
+module github.com/DevNewbie1826/webUtil
 
 go 1.24.6
 

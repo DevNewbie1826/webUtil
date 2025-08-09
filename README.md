@@ -11,7 +11,7 @@ A collection of useful and secure middleware for Go (Golang) web applications.
 ## Installation
 
 ```bash
-go get github.com/DevNewbie1/webUtil
+go get github.com/DevNewbie1826/webUtil
 ```
 
 ---
@@ -29,7 +29,7 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"github.com/DevNewbie1/webUtil/compress"
+	"github.com/DevNewbie1826/webUtil/compress"
 )
 
 func main() {
@@ -63,7 +63,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"github.com/DevNewbie1/webUtil/cookie"
+	"github.com/DevNewbie1826/webUtil/cookie"
 )
 
 func main() {
@@ -118,12 +118,12 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"github.com/DevNewbie1/webUtil/secure"
+	"github.com/DevNewbie1826/webUtil/secure"
 )
 
 func main() {
 	mux := http.NewServeMux()
-	
+
 	// Simple handler
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Get the nonce and use it in your HTML template
@@ -183,9 +183,9 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/DevNewbie1/webUtil/compress"
-	"github.com/DevNewbie1/webUtil/cookie"
-	"github.com/DevNewbie1/webUtil/secure"
+	"github.com/DevNewbie1826/webUtil/compress"
+	"github.com/DevNewbie1826/webUtil/cookie"
+	"github.com/DevNewbie1826/webUtil/secure"
 )
 
 func main() {
@@ -264,7 +264,7 @@ Go(Golang) 웹 애플리케이션을 위한 유용하고 안전한 미들웨어 
 ## 설치
 
 ```bash
-go get github.com/DevNewbie1/webUtil
+go get github.com/DevNewbie1826/webUtil
 ```
 
 ---
@@ -282,7 +282,7 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"github.com/DevNewbie1/webUtil/compress"
+	"github.com/DevNewbie1826/webUtil/compress"
 )
 
 func main() {
@@ -316,7 +316,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"github.com/DevNewbie1/webUtil/cookie"
+	"github.com/DevNewbie1826/webUtil/cookie"
 )
 
 func main() {
@@ -371,12 +371,12 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"github.com/DevNewbie1/webUtil/secure"
+	"github.com/DevNewbie1826/webUtil/secure"
 )
 
 func main() {
 	mux := http.NewServeMux()
-	
+
 	// 간단한 핸들러
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// nonce 값을 가져와서 HTML 템플릿에 사용
@@ -436,9 +436,9 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/DevNewbie1/webUtil/compress"
-	"github.com/DevNewbie1/webUtil/cookie"
-	"github.com/DevNewbie1/webUtil/secure"
+	"github.com/DevNewbie1826/webUtil/compress"
+	"github.com/DevNewbie1826/webUtil/cookie"
+	"github.com/DevNewbie1826/webUtil/secure"
 )
 
 func main() {
