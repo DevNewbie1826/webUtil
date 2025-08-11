@@ -77,22 +77,16 @@ func main() {
 
 	// Handler to set a cookie
 	mux.HandleFunc("/set", func(w http.ResponseWriter, r *http.Request) {
-		cm, ok := cookie.GetCookieManager(r.Context())
-		if !ok {
-			http.Error(w, "Could not get CookieManager", http.StatusInternalServerError)
-			return
-		}
+		// GetCookieManager will panic if the middleware is not configured.
+		cm := cookie.GetCookieManager(r.Context())
 		cm.SetCookie(w, "username", "john.doe", 3600) // name, value, maxAge (seconds)
 		fmt.Fprintln(w, "Cookie 'username' has been set.")
 	})
 
 	// Handler to read a cookie
 	mux.HandleFunc("/get", func(w http.ResponseWriter, r *http.Request) {
-		cm, ok := cookie.GetCookieManager(r.Context())
-		if !ok {
-			http.Error(w, "Could not get CookieManager", http.StatusInternalServerError)
-			return
-		}
+		// GetCookieManager will panic if the middleware is not configured.
+		cm := cookie.GetCookieManager(r.Context())
 		username := cm.ReadCookie(r, "username")
 		if username == "" {
 			fmt.Fprintln(w, "Cookie 'username' not found or invalid.")
@@ -220,21 +214,15 @@ func main() {
 	})
 
 	r.Get("/set-cookie", func(w http.ResponseWriter, r *http.Request) {
-		cm, ok := cookie.GetCookieManager(r.Context())
-		if !ok {
-			http.Error(w, "CookieManager not available", 500)
-			return
-		}
+		// GetCookieManager will panic if the middleware is not configured.
+		cm := cookie.GetCookieManager(r.Context())
 		cm.SetCookie(w, "my-test-cookie", "hello-chi", 600)
 		fmt.Fprintln(w, "Cookie has been set!")
 	})
 
 	r.Get("/read-cookie", func(w http.ResponseWriter, r *http.Request) {
-		cm, ok := cookie.GetCookieManager(r.Context())
-		if !ok {
-			http.Error(w, "CookieManager not available", 500)
-			return
-		}
+		// GetCookieManager will panic if the middleware is not configured.
+		cm := cookie.GetCookieManager(r.Context())
 		val := cm.ReadCookie(r, "my-test-cookie")
 		if val == "" {
 			fmt.Fprintln(w, "Cookie not found or is invalid.")
@@ -330,22 +318,16 @@ func main() {
 
 	// 쿠키를 설정하는 핸들러
 	mux.HandleFunc("/set", func(w http.ResponseWriter, r *http.Request) {
-		cm, ok := cookie.GetCookieManager(r.Context())
-		if !ok {
-			http.Error(w, "CookieManager를 가져올 수 없습니다.", http.StatusInternalServerError)
-			return
-		}
+		// GetCookieManager는 미들웨어가 설정되지 않았을 경우 패닉을 발생시킵니다.
+		cm := cookie.GetCookieManager(r.Context())
 		cm.SetCookie(w, "username", "john.doe", 3600) // 이름, 값, 유효시간(초)
 		fmt.Fprintln(w, "'username' 쿠키가 설정되었습니다.")
 	})
 
 	// 쿠키를 읽는 핸들러
 	mux.HandleFunc("/get", func(w http.ResponseWriter, r *http.Request) {
-		cm, ok := cookie.GetCookieManager(r.Context())
-		if !ok {
-			http.Error(w, "CookieManager를 가져올 수 없습니다.", http.StatusInternalServerError)
-			return
-		}
+		// GetCookieManager는 미들웨어가 설정되지 않았을 경우 패닉을 발생시킵니다.
+		cm := cookie.GetCookieManager(r.Context())
 		username := cm.ReadCookie(r, "username")
 		if username == "" {
 			fmt.Fprintln(w, "'username' 쿠키를 찾을 수 없거나 유효하지 않습니다.")
@@ -473,21 +455,15 @@ func main() {
 	})
 
 	r.Get("/set-cookie", func(w http.ResponseWriter, r *http.Request) {
-		cm, ok := cookie.GetCookieManager(r.Context())
-		if !ok {
-			http.Error(w, "CookieManager를 사용할 수 없습니다.", 500)
-			return
-		}
+		// GetCookieManager는 미들웨어가 설정되지 않았을 경우 패닉을 발생시킵니다.
+		cm := cookie.GetCookieManager(r.Context())
 		cm.SetCookie(w, "my-test-cookie", "hello-chi", 600)
 		fmt.Fprintln(w, "쿠키가 설정되었습니다!")
 	})
 
 	r.Get("/read-cookie", func(w http.ResponseWriter, r *http.Request) {
-		cm, ok := cookie.GetCookieManager(r.Context())
-		if !ok {
-			http.Error(w, "CookieManager를 사용할 수 없습니다.", 500)
-			return
-		}
+		// GetCookieManager는 미들웨어가 설정되지 않았을 경우 패닉을 발생시킵니다.
+		cm := cookie.GetCookieManager(r.Context())
 		val := cm.ReadCookie(r, "my-test-cookie")
 		if val == "" {
 			fmt.Fprintln(w, "쿠키를 찾을 수 없거나 유효하지 않습니다.")

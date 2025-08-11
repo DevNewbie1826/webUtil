@@ -29,12 +29,15 @@ func Middleware(secret []byte) func(http.Handler) http.Handler {
 }
 
 // GetCookieManager retrieves the CookieManager instance from the current request's context.
-// It returns the manager and a boolean indicating if the type assertion was successful.
-// GetCookieManager 함수는 현재 요청의 컨텍스트에서 CookieManager 인스턴스를 추출하여 반환합니다.
-// 인스턴스가 존재하고 타입이 올바르면 (*CookieManager, true)를, 그렇지 않으면 (nil, false)를 반환합니다.
-func GetCookieManager(ctx context.Context) (*CookieManager, bool) {
+// It panics if the CookieManager is not found, which helps to ensure that the middleware is correctly configured.
+// GetCookieManager 함수는 현재 요청의 컨텍스트에서 CookieManager 인스턴스를 추출합니다.
+// 만약 인스턴스를 찾을 수 없다면 패닉을 발생시켜, 미들웨어가 올바르게 설정되었음을 보장하는 데 도움을 줍니다.
+func GetCookieManager(ctx context.Context) *CookieManager {
 	cm, ok := ctx.Value(cookieContextKey{}).(*CookieManager)
-	return cm, ok
+	if !ok {
+		panic("cookie.GetCookieManager: CookieManager not found in context. Make sure to include the cookie.Middleware in your handler chain.")
+	}
+	return cm
 }
 
 // CookieManager holds the secret key for signing and provides cookie manipulation functions.
