@@ -1,3 +1,7 @@
+github.com/DevNewbie1826/httperror v1.1.0 h1:uGWXs5pn/X/IqAdfzVlAAFEHyZI8fka2eS5t15Im5sA=
+github.com/DevNewbie1826/httperror v1.1.0/go.mod h1:ug8bI/X1n34nys21/xk5FPF3df64RBP/ERUQsQY2Dpk=
+github.com/go-chi/chi/v5 v5.2.2 h1:CMwsvRVTbXVytCk1Wd72Zy1LAsAh9GxMmSNWLHCG618=
+github.com/go-chi/chi/v5 v5.2.2/go.mod h1:L2yAIGWB3H+phAw1NxKwWM+7eUH/lU8pOMm5hHcoops=
 github.com/klauspost/compress v1.18.0 h1:c/Cqfb0r+Yi+JtIEq73FWXVkRonBlf0CRNYc8Zttxdo=
 github.com/klauspost/compress v1.18.0/go.mod h1:2Pp+KzxcywXVXMr50+X0Q/Lsb43OQHYWRCY2AiWywWQ=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
