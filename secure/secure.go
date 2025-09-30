@@ -11,23 +11,24 @@ import (
 	"github.com/valyala/bytebufferpool"
 )
 
+const NonceSize = 16
+
 // nonceContextKey is an unexported type used as a key for context values.
 // nonceContextKey는 컨텍스트 값의 키로 사용되는 비공개 타입입니다.
 type nonceContextKey struct{}
 
-// cryptoRandNonce generates n bytes of random data using crypto/rand and writes it to the given io.Writer after base64 encoding.
+// cryptoRandNonce generates NonceSize bytes of random data using crypto/rand and writes it to the given io.Writer after base64 encoding.
 // It panics if random data generation fails.
-// cryptoRandNonce는 crypto/rand를 이용해 n 바이트의 랜덤 데이터를 생성하고, base64 인코딩 후 주어진 io.Writer에 씁니다.
+// cryptoRandNonce는 crypto/rand를 이용해 NonceSize 바이트의 랜덤 데이터를 생성하고, base64 인코딩 후 주어진 io.Writer에 씁니다.
 // 랜덤 데이터 생성 실패 시 panic을 발생시킵니다.
-func cryptoRandNonce(w io.Writer, n int64) {
-	b := make([]byte, n)
-	if _, err := io.ReadFull(rand.Reader, b); err != nil {
+func cryptoRandNonce(w io.Writer) {
+	var buf [NonceSize]byte
+	if _, err := io.ReadFull(rand.Reader, buf[:]); err != nil {
 		panic("secure: " + err.Error())
 	}
-
-	enc := base64.NewEncoder(base64.RawStdEncoding, w)
-	enc.Write(b)
-	enc.Close()
+	var encoded [24]byte
+	base64.RawStdEncoding.Encode(encoded[:], buf[:])
+	w.Write(encoded[:base64.RawStdEncoding.EncodedLen(NonceSize)])
 }
 
 // CSPConfig is a configuration struct for dynamically generating the Content-Security-Policy header.
@@ -58,7 +59,7 @@ func NonceHeaders(config CSPConfig) func(http.Handler) http.Handler {
 			buff := bytebufferpool.Get()
 			defer bytebufferpool.Put(buff) // Ensure the buffer is returned even if a panic occurs.
 
-			cryptoRandNonce(buff, 24)
+			cryptoRandNonce(buff)
 			nonce := buff.String()
 			r = r.WithContext(context.WithValue(r.Context(), nonceContextKey{}, nonce))
 
