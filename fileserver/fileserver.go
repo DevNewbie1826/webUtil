@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/DevNewbie1826/httperror"
@@ -41,11 +42,7 @@ func (nlfs noListFileSystem) Open(name string) (http.File, error) {
 	}
 	if s.IsDir() {
 		f.Close()
-		index := path.Join(name, "index.html")
-		if indexFile, err := nlfs.fs.Open(index); err == nil {
-			return indexFile, nil
-		}
-		return nil, os.ErrNotExist
+		return nil, os.ErrPermission
 	}
 	return f, nil
 }
@@ -120,9 +117,56 @@ func Run(r *chi.Mux, urlPath string, fs http.FileSystem, stripPrefix string, cac
 	fileServer := http.FileServer(finalFs)
 
 	handlerWithCustom404 := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Optimization: Use http.ServeFile for local directories to leverage sendfile
+		// 최적화: 로컬 디렉토리인 경우 http.ServeFile을 사용하여 sendfile을 활용
+		if d, ok := fs.(http.Dir); ok {
+			basePath := string(d)
+			upath := r.URL.Path
+			if !strings.HasPrefix(upath, "/") {
+				upath = "/" + upath
+			}
+			upath = path.Clean(upath)
+
+			// Construct full path considering stripPrefix
+			// stripPrefix를 고려하여 전체 경로 구성
+			fullPath := filepath.Join(basePath, stripPrefix, upath)
+
+			// Check file existence and type
+			// 파일 존재 여부 및 타입 확인
+			stat, err := os.Stat(fullPath)
+			if err != nil {
+				if os.IsNotExist(err) {
+					httperror.ReportNotFound(r)
+				} else {
+					httperror.ReportInternalServerError(r)
+				}
+				return
+			}
+
+			// Prevent directory listing
+			// 디렉토리 리스팅 방지
+			if stat.IsDir() {
+				httperror.ReportForbidden(r)
+				return
+			}
+
+			// Apply caching policy
+			// 캐시 정책 적용
+			if cacheMaxAgeSeconds > 0 {
+				w.Header().Set("Cache-Control", fmt.Sprintf("public, max-age=%d", cacheMaxAgeSeconds))
+			} else if cacheMaxAgeSeconds < 0 {
+				w.Header().Set("Cache-Control", "no-store")
+			}
+
+			http.ServeFile(w, r, fullPath)
+			return
+		}
+
 		f, err := finalFs.Open(r.URL.Path)
 		if err != nil {
-			if os.IsNotExist(err) {
+			if os.IsPermission(err) {
+				httperror.ReportForbidden(r)
+			} else if os.IsNotExist(err) {
 				httperror.ReportNotFound(r)
 			} else {
 				httperror.ReportInternalServerError(r)
