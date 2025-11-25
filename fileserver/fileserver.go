@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/DevNewbie1826/httperror"
@@ -79,21 +80,21 @@ func (pfs prefixAddingFileSystem) Open(name string) (http.File, error) {
 //
 // Parameters:
 //   - r: The Chi router.
-//   - r: Chi 라우터입니다.
+//     - r: Chi 라우터입니다.
 //   - urlPath: The URL path to serve files from (e.g., "/static").
-//   - urlPath: 파일을 제공할 URL 경로입니다 (예: "/static").
+//     - urlPath: 파일을 제공할 URL 경로입니다 (예: "/static").
 //   - fs: The http.FileSystem to serve files from.
-//   - fs: 파일을 제공할 http.FileSystem입니다.
+//     - fs: 파일을 제공할 http.FileSystem입니다.
 //   - stripPrefix: A prefix to be added to the file path inside the http.FileSystem.
-//   - stripPrefix: http.FileSystem 내부의 파일 경로에 추가될 접두사입니다.
+//     - stripPrefix: http.FileSystem 내부의 파일 경로에 추가될 접두사입니다.
 //   - cacheMaxAgeSeconds: Caching duration in seconds.
-//   - > 0: Sets "Cache-Control: public, max-age=<value>".
-//   - < 0: Sets "Cache-Control: no-store".
-//   - == 0: Caching is disabled (no header is set).
-//   - cacheMaxAgeSeconds: 캐시 기간(초)입니다.
-//   - > 0: "Cache-Control: public, max-age=<값>"을 설정합니다.
-//   - < 0: "Cache-Control: no-store"를 설정합니다.
-//   - == 0: 캐싱이 비활성화됩니다 (헤더가 설정되지 않음).
+//     - > 0: Sets "Cache-Control: public, max-age=<value>".
+//     - < 0: Sets "Cache-Control: no-store".
+//     - == 0: Caching is disabled (no header is set).
+//     - cacheMaxAgeSeconds: 캐시 기간(초)입니다.
+//       - > 0: "Cache-Control: public, max-age=<값>"을 설정합니다.
+//       - < 0: "Cache-Control: no-store"를 설정합니다.
+//       - == 0: 캐싱이 비활성화됩니다 (헤더가 설정되지 않음).
 func Run(r *chi.Mux, urlPath string, fs http.FileSystem, stripPrefix string, cacheMaxAgeSeconds int) {
 	// --- Input Validation ---
 	if strings.ContainsAny(urlPath, "{}*") {
@@ -116,17 +117,51 @@ func Run(r *chi.Mux, urlPath string, fs http.FileSystem, stripPrefix string, cac
 	fileServer := http.FileServer(finalFs)
 
 	handlerWithCustom404 := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// The optimization path using http.ServeFile has been removed
-		// as it can conflict with middleware like gzip handlers, causing infinite loading issues.
-		// All requests are now handled through the standard http.FileServer
-		// to ensure middleware compatibility.
-		//
-		// http.ServeFile을 사용하는 최적화 경로는 gzip 핸들러와 같은 미들웨어와 충돌하여
-		// 무한 로딩 문제를 일으킬 수 있으므로 제거되었습니다.
-		// 이제 모든 요청은 미들웨어 호환성을 보장하기 위해 표준 http.FileServer를 통해 처리됩니다.
+		// Optimization: Use http.ServeFile for local directories to leverage sendfile
+		// 최적화: 로컬 디렉토리인 경우 http.ServeFile을 사용하여 sendfile을 활용
+		if d, ok := fs.(http.Dir); ok {
+			basePath := string(d)
+			upath := r.URL.Path
+			if !strings.HasPrefix(upath, "/") {
+				upath = "/" + upath
+			}
+			upath = path.Clean(upath)
 
-		// Check if the file exists and handle errors
-		// 파일이 존재하는지 확인하고 오류 처리
+			// Construct full path considering stripPrefix
+			// stripPrefix를 고려하여 전체 경로 구성
+			fullPath := filepath.Join(basePath, stripPrefix, upath)
+
+			// Check file existence and type
+			// 파일 존재 여부 및 타입 확인
+			stat, err := os.Stat(fullPath)
+			if err != nil {
+				if os.IsNotExist(err) {
+					httperror.ReportNotFound(r)
+				} else {
+					httperror.ReportInternalServerError(r)
+				}
+				return
+			}
+
+			// Prevent directory listing
+			// 디렉토리 리스팅 방지
+			if stat.IsDir() {
+				httperror.ReportForbidden(r)
+				return
+			}
+
+			// Apply caching policy
+			// 캐시 정책 적용
+			if cacheMaxAgeSeconds > 0 {
+				w.Header().Set("Cache-Control", fmt.Sprintf("public, max-age=%d", cacheMaxAgeSeconds))
+			} else if cacheMaxAgeSeconds < 0 {
+				w.Header().Set("Cache-Control", "no-store")
+			}
+
+			http.ServeFile(w, r, fullPath)
+			return
+		}
+
 		f, err := finalFs.Open(r.URL.Path)
 		if err != nil {
 			if os.IsPermission(err) {
