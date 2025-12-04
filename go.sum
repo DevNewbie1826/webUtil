@@ -1,8 +1,8 @@
-github.com/DevNewbie1826/httperror v1.1.0 h1:uGWXs5pn/X/IqAdfzVlAAFEHyZI8fka2eS5t15Im5sA=
-github.com/DevNewbie1826/httperror v1.1.0/go.mod h1:ug8bI/X1n34nys21/xk5FPF3df64RBP/ERUQsQY2Dpk=
+github.com/DevNewbie1826/httperror v1.2.4 h1:Elpnqxb3evLQ6q7tcm9sryK1yu8BAtPWZk1UBhUwj4o=
+github.com/DevNewbie1826/httperror v1.2.4/go.mod h1:p25+VlOd0uYANrrH7P1faYSRHhgRObT07wLHMgvWoCQ=
 github.com/go-chi/chi/v5 v5.2.3 h1:WQIt9uxdsAbgIYgid+BpYc+liqQZGMHRaUwp0JUcvdE=
 github.com/go-chi/chi/v5 v5.2.3/go.mod h1:L2yAIGWB3H+phAw1NxKwWM+7eUH/lU8pOMm5hHcoops=
-github.com/klauspost/compress v1.18.0 h1:c/Cqfb0r+Yi+JtIEq73FWXVkRonBlf0CRNYc8Zttxdo=
-github.com/klauspost/compress v1.18.0/go.mod h1:2Pp+KzxcywXVXMr50+X0Q/Lsb43OQHYWRCY2AiWywWQ=
+github.com/klauspost/compress v1.18.2 h1:iiPHWW0YrcFgpBYhsA6D1+fqHssJscY/Tm/y2Uqnapk=
+github.com/klauspost/compress v1.18.2/go.mod h1:R0h/fSBs8DE4ENlcrlib3PsXS61voFxhIs2DeRhCvJ4=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=

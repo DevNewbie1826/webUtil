@@ -80,21 +80,21 @@ func (pfs prefixAddingFileSystem) Open(name string) (http.File, error) {
 //
 // Parameters:
 //   - r: The Chi router.
-//     - r: Chi 라우터입니다.
+//   - r: Chi 라우터입니다.
 //   - urlPath: The URL path to serve files from (e.g., "/static").
-//     - urlPath: 파일을 제공할 URL 경로입니다 (예: "/static").
+//   - urlPath: 파일을 제공할 URL 경로입니다 (예: "/static").
 //   - fs: The http.FileSystem to serve files from.
-//     - fs: 파일을 제공할 http.FileSystem입니다.
+//   - fs: 파일을 제공할 http.FileSystem입니다.
 //   - stripPrefix: A prefix to be added to the file path inside the http.FileSystem.
-//     - stripPrefix: http.FileSystem 내부의 파일 경로에 추가될 접두사입니다.
+//   - stripPrefix: http.FileSystem 내부의 파일 경로에 추가될 접두사입니다.
 //   - cacheMaxAgeSeconds: Caching duration in seconds.
-//     - > 0: Sets "Cache-Control: public, max-age=<value>".
-//     - < 0: Sets "Cache-Control: no-store".
-//     - == 0: Caching is disabled (no header is set).
-//     - cacheMaxAgeSeconds: 캐시 기간(초)입니다.
-//       - > 0: "Cache-Control: public, max-age=<값>"을 설정합니다.
-//       - < 0: "Cache-Control: no-store"를 설정합니다.
-//       - == 0: 캐싱이 비활성화됩니다 (헤더가 설정되지 않음).
+//   - > 0: Sets "Cache-Control: public, max-age=<value>".
+//   - < 0: Sets "Cache-Control: no-store".
+//   - == 0: Caching is disabled (no header is set).
+//   - cacheMaxAgeSeconds: 캐시 기간(초)입니다.
+//   - > 0: "Cache-Control: public, max-age=<값>"을 설정합니다.
+//   - < 0: "Cache-Control: no-store"를 설정합니다.
+//   - == 0: 캐싱이 비활성화됩니다 (헤더가 설정되지 않음).
 func Run(r *chi.Mux, urlPath string, fs http.FileSystem, stripPrefix string, cacheMaxAgeSeconds int) {
 	// --- Input Validation ---
 	if strings.ContainsAny(urlPath, "{}*") {
@@ -136,9 +136,9 @@ func Run(r *chi.Mux, urlPath string, fs http.FileSystem, stripPrefix string, cac
 			stat, err := os.Stat(fullPath)
 			if err != nil {
 				if os.IsNotExist(err) {
-					httperror.ReportNotFound(r)
+					httperror.NotFound(w, r)
 				} else {
-					httperror.ReportInternalServerError(r)
+					httperror.InternalServerError(w, r)
 				}
 				return
 			}
@@ -146,7 +146,7 @@ func Run(r *chi.Mux, urlPath string, fs http.FileSystem, stripPrefix string, cac
 			// Prevent directory listing
 			// 디렉토리 리스팅 방지
 			if stat.IsDir() {
-				httperror.ReportForbidden(r)
+				httperror.Forbidden(w, r)
 				return
 			}
 
@@ -165,11 +165,11 @@ func Run(r *chi.Mux, urlPath string, fs http.FileSystem, stripPrefix string, cac
 		f, err := finalFs.Open(r.URL.Path)
 		if err != nil {
 			if os.IsPermission(err) {
-				httperror.ReportForbidden(r)
+				httperror.Forbidden(w, r)
 			} else if os.IsNotExist(err) {
-				httperror.ReportNotFound(r)
+				httperror.NotFound(w, r)
 			} else {
-				httperror.ReportInternalServerError(r)
+				httperror.InternalServerError(w, r)
 			}
 			return
 		}
